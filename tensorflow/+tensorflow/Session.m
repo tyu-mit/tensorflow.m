@@ -49,11 +49,24 @@ classdef Session < util.mixin.Pointer
         error('tensorflow:Session:run:InputArguments', 'Wrong number of input arguments provided.');
       end
       if numel(inputs) > 0
-        assert(isa(inputs, 'tensorflow.Output'), 'Provided inputs must be of class tensorflow.Output.');
-        assert(isa(input_values, 'tensorflow.Tensor'), 'Provided input values must be of class tensorflow.Tensor.');
+        if iscell(inputs)
+          for idx = 1:numel(inputs)
+            assert(isa(inputs{idx}, 'tensorflow.Output'), 'Provided inputs must be of class tensorflow.Output.');
+            assert(isa(input_values{idx}, 'tensorflow.Tensor'), 'Provided input values must be of class tensorflow.Tensor.');
+          end
+        else
+            assert(isa(inputs, 'tensorflow.Output'), 'Provided inputs must be of class tensorflow.Output.');
+            assert(isa(input_values, 'tensorflow.Tensor'), 'Provided input values must be of class tensorflow.Tensor.');
+        end
       end
       if numel(outputs) > 0
-        assert(isa(outputs, 'tensorflow.Output'), 'Provided outputs must be of class tensorflow.Output.');
+        if iscell(outputs)
+          for idx = 1:numel(outputs)
+            assert(isa(outputs{idx}, 'tensorflow.Output'), 'Provided outputs must be of class tensorflow.Output.');
+          end
+        else
+            assert(isa(outputs, 'tensorflow.Output'), 'Provided outputs must be of class tensorflow.Output.');
+        end
       end
 
       if nargin > 4
@@ -77,14 +90,30 @@ classdef Session < util.mixin.Pointer
       input_values_ref = [];
       if ninputs > 0
         assert(ninputs == numel(input_values), 'Number of provided inputs and input values must be equal.');
-        inputs_ref = [inputs.ref];
-        input_values_ref = [input_values.ref];
+        if iscell(inputs)
+          inputs_ref = zeros(1, ninputs);
+          input_values_ref = zeros(1, ninputs);
+          for idx = 1:ninputs
+            inputs_ref(idx) = inputs{idx}.ref;
+            input_values_ref(idx) = input_values{idx}.ref;
+          end
+        else
+            inputs_ref = [inputs.ref];
+            input_values_ref = [input_values.ref];
+        end
       end
 
       noutputs = numel(outputs);
       outputs_ref = [];
       if noutputs > 0
-        outputs_ref = [outputs.ref];
+          if iscell(outputs)
+            outputs_ref = zeros(1, noutputs);
+            for idx = 1:numel(outputs)
+              outputs_ref(idx) = outputs{idx}.ref; 
+            end
+          else
+            outputs_ref = [outputs.ref];
+          end
       end
 
       ntargets = numel(target_opers);
@@ -94,10 +123,10 @@ classdef Session < util.mixin.Pointer
       end
 
       refs = tensorflow_m_('TF_SessionRun', obj.ref, run_options, ...
-                      inputs_ref, input_values_ref, int32(ninputs), ...
-                      outputs_ref, int32(noutputs), ...
-                      target_opers_ref, int32(ntargets), ...
-                      run_metadata, obj.status.ref);
+                           uint64(inputs_ref), uint64(input_values_ref), ...
+                           int32(ninputs), uint64(outputs_ref), ...
+                           int32(noutputs), target_opers_ref, ...
+                           int32(ntargets), run_metadata, obj.status.ref);
       obj.status.maybe_raise();
       if ~isempty(refs)
         res = tensorflow.Tensor(refs, true);

@@ -129,12 +129,16 @@ void TFM_SetTensorData(MEX_ARGS) {
   TF_DataType dtype = TF_TensorType(tensor);
   if(dtype == TF_STRING) {
     size_t len = (size_t) mxGetN(prhs[1]);
-    void* dst = TF_TensorData(tensor) + sizeof(uint64_t);
-    size_t dst_len = TF_StringEncodedSize(len);
+    
+    TF_TString tstr[1];
+    TF_TString_Init(&tstr[0]);
+    TF_TString_Copy(&tstr[0], (char *) src, len);
+    
+    void* dst = TF_TensorData(tensor);
+    
     TF_Status* status = TF_NewStatus();
-    size_t consumed = TF_StringEncode(src, len, dst, dst_len, status);
-    if(TF_GetCode(status) != TF_OK)
-      mexErrMsgTxt("Error encoding string to Tensor data.");
+    memcpy(dst, (void *)tstr, TF_TensorByteSize(tensor));
+    
   } else {
     size_t len = 1;
     for(int i = 0; i < TF_NumDims(tensor); i++)
@@ -150,19 +154,13 @@ void TFM_SetTensorData(MEX_ARGS) {
 void TFM_GetTensorData(MEX_ARGS) {
   TF_Tensor* tensor = (TF_Tensor*) arr2ptr(prhs[0]);
   TF_DataType dtype = TF_TensorType(tensor);
-  if(dtype == TF_STRING) {
-    size_t len = TF_TensorByteSize(tensor) - sizeof(uint64_t);
-    const char** dst = (const char**) mxCalloc(1, sizeof(char*));
-    size_t* dst_len = (size_t*) mxCalloc(1, sizeof(size_t));
-    TF_Status* status = TF_NewStatus();
-    size_t consumed = TF_StringDecode((char*) (TF_TensorData(tensor) + sizeof(uint64_t)), len, dst, dst_len, status);
-    if(TF_GetCode(status) != TF_OK)
-      mexErrMsgTxt("Error decoding string from Tensor data.");
-
+  if(dtype == TF_STRING) {    
+    TF_TString *t_str = (TF_TString *)TF_TensorData(tensor);
+    size_t len = TF_TString_GetSize(t_str);
+    const char *dst = TF_TString_GetDataPointer(t_str);
+    
     plhs[0] = mxCreateNumericMatrix(1, len, mxUINT8_CLASS, mxREAL);
-    memcpy(mxGetData(plhs[0]), dst, *dst_len);
-    mxFree(dst);
-    mxFree(dst_len);
+    memcpy(mxGetData(plhs[0]), dst, len);
   } else {
     size_t len = 1;
     for(int i = 0; i < TF_NumDims(tensor); i++)

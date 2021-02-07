@@ -35,7 +35,7 @@ classdef LibHandler < util.mixin.Base
 
   methods (Access=private)
     function [location, version] = download_library(obj, benv)
-      version = '1.15.0';
+      version = '2.4.0';
 
       if ismac
         % macOS (CPU only)

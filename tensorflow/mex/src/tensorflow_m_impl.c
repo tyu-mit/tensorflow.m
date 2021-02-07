@@ -110,7 +110,9 @@ void TF_AllocateTensor_(MEX_ARGS) {
   int num_dims = *((int*) mxGetData(prhs[2]));
 
   if(type == TF_STRING) {
-    size_t len = TF_StringEncodedSize((size_t) dims[1]) + sizeof(uint64_t);
+    TF_TString tstr[1];
+    TF_TString_Init(&tstr[0]);
+    size_t len = sizeof(tstr);
     int64_t* dims_ = mxCalloc(1, sizeof(int64_t));
     *dims_ = 0;
     num_dims = 1;
@@ -194,24 +196,6 @@ void TF_TensorElementCount_(MEX_ARGS) {
 void TF_TensorBitcastFrom_(MEX_ARGS) {
   NOT_SUPPORTED
   // questionable feasibility due to shared data buffer
-}
-
-// TF_CAPI_EXPORT extern size_t TF_StringEncode(const char* src, size_t src_len, char* dst, size_t dst_len, TF_Status* status);
-void TF_StringEncode_(MEX_ARGS) {
-  NOT_SUPPORTED
-  // not exposed, only internal use
-}
-
-// TF_CAPI_EXPORT extern size_t TF_StringDecode(const char* src, size_t src_len, const char** dst, size_t* dst_len, TF_Status* status);
-void TF_StringDecode_(MEX_ARGS) {
-  NOT_SUPPORTED
-  // not exposed, only internal use
-}
-
-// TF_CAPI_EXPORT extern size_t TF_StringEncodedSize(size_t len);
-void TF_StringEncodedSize_(MEX_ARGS) {
-  NOT_SUPPORTED
-  // not exposed, only internal use
 }
 
 // TF_CAPI_EXPORT extern TF_SessionOptions* TF_NewSessionOptions(void);
@@ -1106,6 +1090,7 @@ void TF_GraphNextOperation_(MEX_ARGS) {
   size_t* pos = (size_t*) mxGetData(prhs[1]);
   TF_Operation* oper = TF_GraphNextOperation(graph, pos);
   plhs[0] = ptr2arr((void*) oper);
+  plhs[1] = ptr2arr(pos);
 }
 
 // TF_CAPI_EXPORT extern void TF_GraphToGraphDef(TF_Graph* graph, TF_Buffer* output_graph_def, TF_Status* status);

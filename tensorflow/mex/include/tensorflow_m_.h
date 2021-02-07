@@ -83,9 +83,6 @@ void TF_TensorByteSize_(MEX_ARGS);
 void TF_TensorData_(MEX_ARGS);
 void TF_TensorElementCount_(MEX_ARGS);
 void TF_TensorBitcastFrom_(MEX_ARGS);
-void TF_StringEncode_(MEX_ARGS);
-void TF_StringDecode_(MEX_ARGS);
-void TF_StringEncodedSize_(MEX_ARGS);
 void TF_NewSessionOptions_(MEX_ARGS);
 void TF_SetTarget_(MEX_ARGS);
 void TF_SetConfig_(MEX_ARGS);
@@ -286,9 +283,6 @@ static command_handle handles[] = {
   { "TF_TensorData", TF_TensorData_ },
   { "TF_TensorElementCount", TF_TensorElementCount_ },
   { "TF_TensorBitcastFrom", TF_TensorBitcastFrom_ },
-  { "TF_StringEncode", TF_StringEncode_ },
-  { "TF_StringDecode", TF_StringDecode_ },
-  { "TF_StringEncodedSize", TF_StringEncodedSize_ },
   { "TF_NewSessionOptions", TF_NewSessionOptions_ },
   { "TF_SetTarget", TF_SetTarget_ },
   { "TF_SetConfig", TF_SetConfig_ },
