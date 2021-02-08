@@ -72,13 +72,65 @@ classdef DataType < util.mixin.Enumeration & util.mixin.Vectorize
     end
 
     function entry = lookup_int(val_int)
-      idx = find([tensorflow.DataType.TYPEMAP{:,2}] == val_int);
-      entry = tensorflow.DataType.TYPEMAP(idx, :);
+      TYPEMAP = [ ...
+        { 'TF_FLOAT',       1, 'single'  };
+        { 'TF_DOUBLE',      2, 'double'  };
+        { 'TF_INT32',       3, 'int32'   };
+        { 'TF_UINT8',       4, 'uint8'   };
+        { 'TF_INT16',       5, 'int16'   };
+        { 'TF_INT8',        6, 'int8'    };
+        { 'TF_STRING',      7, 'char'    };
+        { 'TF_COMPLEX64',   8, 'complex' };
+        { 'TF_COMPLEX',     8, 'complex' };
+        { 'TF_INT64',       9, 'int64'   };
+        { 'TF_BOOL',       10, 'logical' };
+        { 'TF_QINT8',      11, ''        };
+        { 'TF_QUINT8',     12, ''        };
+        { 'TF_QINT32',     13, ''        };
+        { 'TF_BFLOAT16',   14, ''        };
+        { 'TF_QINT16',     15, ''        };
+        { 'TF_QUINT16',    16, ''        };
+        { 'TF_UINT16',     17, 'uint16'  };
+        { 'TF_COMPLEX128', 18, ''        };
+        { 'TF_HALF',       19, ''        };
+        { 'TF_RESOURCE',   20, ''        };
+        { 'TF_VARIANT',    21, ''        };
+        { 'TF_UINT32',     22, 'uint32'  };
+        { 'TF_UINT64',     23, 'uint64'  };
+      ];
+      idx = find([TYPEMAP{:,2}] == val_int);
+      entry = TYPEMAP(idx, :);
     end
 
     function entry = lookup_rev(str_mat)
-      idx = strcmp(str_mat, tensorflow.DataType.TYPEMAP(:,3));
-      entry = tensorflow.DataType.TYPEMAP(idx, :);
+      TYPEMAP = [ ...
+        { 'TF_FLOAT',       1, 'single'  };
+        { 'TF_DOUBLE',      2, 'double'  };
+        { 'TF_INT32',       3, 'int32'   };
+        { 'TF_UINT8',       4, 'uint8'   };
+        { 'TF_INT16',       5, 'int16'   };
+        { 'TF_INT8',        6, 'int8'    };
+        { 'TF_STRING',      7, 'char'    };
+        { 'TF_COMPLEX64',   8, 'complex' };
+        { 'TF_COMPLEX',     8, 'complex' };
+        { 'TF_INT64',       9, 'int64'   };
+        { 'TF_BOOL',       10, 'logical' };
+        { 'TF_QINT8',      11, ''        };
+        { 'TF_QUINT8',     12, ''        };
+        { 'TF_QINT32',     13, ''        };
+        { 'TF_BFLOAT16',   14, ''        };
+        { 'TF_QINT16',     15, ''        };
+        { 'TF_QUINT16',    16, ''        };
+        { 'TF_UINT16',     17, 'uint16'  };
+        { 'TF_COMPLEX128', 18, ''        };
+        { 'TF_HALF',       19, ''        };
+        { 'TF_RESOURCE',   20, ''        };
+        { 'TF_VARIANT',    21, ''        };
+        { 'TF_UINT32',     22, 'uint32'  };
+        { 'TF_UINT64',     23, 'uint64'  };
+      ];
+      idx = strcmp(str_mat, TYPEMAP(:,3));
+      entry = TYPEMAP(idx, :);
     end
   end
 
