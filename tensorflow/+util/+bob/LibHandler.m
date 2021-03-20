@@ -54,7 +54,7 @@ classdef LibHandler < util.mixin.Base
       location = fullfile(benv.dirs.mex, 'third_party', fname);
 
       if exist(location, 'dir') == 0
-        dl_link = ['https://storage.googleapis.com/tensorflow/libtensorflow/' fname '.' fext];
+        dl_link = ['https://mldpd5126550332.blob.core.windows.net/public/' fname '.' fext];
         dl_file = fullfile(tempdir, [fname '.' fext]);
         if exist(dl_file, 'file') ~= 2
           obj.debugMsg('Downloading TensorFlow C library ...\n');
